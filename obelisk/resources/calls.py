@@ -16,7 +16,7 @@ from obelisk.model import Model, Call, User
 
 import datetime
 
-colors = ['orange', '#FF3300', '#FFFF00', '#FF66CC', '#FF0099', '#99CCCC', '#FFFF99', 'blue', 'yellow', 'green', 'red']
+colors = ['orange', '#FF3300', '#FFFF00', '#FF66CC', '#FF0099', '#99CCCC', '#FFFF99', 'blue', 'yellow', 'green', 'red', '#FFFFFF', '#FAB', '#AAA', '#FF0']
 providers_colors = {}
 
 class CallsResource(Resource):
