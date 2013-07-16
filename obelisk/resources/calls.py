@@ -9,6 +9,8 @@ import pprint
 import json
 import time
 
+from sqlalchemy import desc
+
 from obelisk import pricechecker
 from obelisk import session
 from obelisk.templates import print_template
@@ -80,10 +82,32 @@ class CallsResource(Resource):
 	if len(parts) > 2:
 		if parts[2] == 'all':
 			return self.render_all()
+		elif parts[2] == 'render':
+			return self.render_all_text()
 		else:
 			return self.render_all(parts[2])
 	else:
 		return print_template('timeline', {})
+    def render_all_text(self):
+	model = Model()
+	calls = model.query(Call).order_by(desc(Call.timestamp)).limit(1000)
+        result = "<table>"
+        for call in calls:
+            text = "<tr><td>"
+            if call.user:
+                text += str(call.user.voip_id)
+            else:
+                text += "unknown"
+            text += "</td><td>"
+            text +=str(call.destination)
+            text += "</td><td>"
+            text += "%.2f min" % (call.duration/60.0,)
+            text += "</td><td>"
+            text += str(self.format_date(call.timestamp))
+            text += "</td></tr>"
+            result += text
+        result += "</table>"
+	return result
     def render_all(self, user_ext=None):
 	"""
 	Render calls for the given extensions.
@@ -98,7 +122,7 @@ class CallsResource(Resource):
 	result['events'] = []
 	events = result['events']
 	if user_ext:
-		user = model.query(User).filter_by(voip_id=user).first()
+		user = model.query(User).filter_by(voip_id=user_ext).first()
 		calls = model.query(Call).filter_by(user=user)
 	else:
 		calls = model.query(Call)

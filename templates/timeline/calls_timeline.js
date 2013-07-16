@@ -12,7 +12,7 @@ function onLoad() {
     
     var bandInfos = [
 	Timeline.createBandInfo({
-	    width:          "300", // set to a minimum, autoWidth will then adjust
+	    width:          "92%", // set to a minimum, autoWidth will then adjust
 	    intervalUnit:   Timeline.DateTime.DAY,
 	    intervalPixels: 1200,
 	    eventSource:    eventSource1,
@@ -20,7 +20,7 @@ function onLoad() {
 	    layout:         'original'  // original, overview, detailed
 	}),
 	Timeline.createBandInfo({
-	    width:          "30", 
+	    width:          "8%", 
 	    intervalUnit:   Timeline.DateTime.DAY, 
 	    intervalPixels: 200,
 	    eventSource:    eventSource1,
