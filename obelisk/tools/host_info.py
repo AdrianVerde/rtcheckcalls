@@ -11,6 +11,12 @@ from obelisk.resources import sse
 def run_command(cmd):
 	return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 
+def get_cli_clients():
+	result = run_command(['/usr/bin/lsof', '/var/run/asterisk/asterisk.ctl'])
+        result = result.split("\n")
+        return len(result)-1
+        
+
 # uptime
 def get_obelisk_uptime():
 	curr_time = time.time()
@@ -109,6 +115,7 @@ def get_report():
 	return output
 
 if __name__ == "__main__":
+	print get_cli_clients()
 	print get_uptime()
 	print get_tinc_ip()
 	print get_memory()
