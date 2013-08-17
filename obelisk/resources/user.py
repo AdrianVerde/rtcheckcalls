@@ -1,6 +1,8 @@
 import os
+from twisted.web.server import NOT_DONE_YET
 from twisted.web.resource import Resource
 from twisted.web.util import redirectTo
+from twisted.internet import threads
 from datetime import datetime
 import csv
 import json
@@ -23,12 +25,22 @@ class UserResource(Resource):
 	Resource.__init__(self)
 	self._accounting = accounting
 
+    def render_finish(self, output, request):
+	request.write(output)
+        request.finish()
+
+    def render_thread(self, request, logged):
+	logged = session.get_user(request)
+        d = threads.deferToThread(self.render_thread, request, logged)
+        d.addCallback(self.render_finish, request)
+	return NOT_DONE_YET
+
     def render_GET(self, request):
+	logged = session.get_user(request)
         args = {}
         for a in request.args:
             args[a] = request.args[a][0]
 
-	logged = session.get_user(request)
 	if 'account' in args:
 		res = args['account']
 	else:

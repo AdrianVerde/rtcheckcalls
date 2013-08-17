@@ -17,6 +17,8 @@ from obelisk.asterisk import cli
 
 filename = "/var/log/asterisk/cel-custom/Master.csv"
 
+manager = None
+
 def notify_sse(text, section='rtcheckcalls', user=None):
 	if sse.resource:
 		try:
@@ -92,6 +94,7 @@ class CallMonitor(object):
 		    self.log("%s answered on channel %s" % (self._from, channel))
 	    	    notify_sse({'from': self._from, 'to': self._real_to, 'event': 'answer'}, 'call_monitor', self._user)
 		    self._starttime = parse_time(args['eventtime'])
+		    self._our_starttime = time.time()
 		    self._channel = channel
 		    self.predict_cut()
 		    #reactor.callLater(10, self.cut_call, channel)
@@ -124,12 +127,18 @@ class CallMonitor(object):
 	    mana = float(accounting.get_credit(self._from_exten))
 	    if self._cost and (not mana or mana < self._cost):
 		    self.cut_call(channel, "not enough credit")
-    def on_hangup(self, args):
+    def on_hangup(self, args={}):
 	    if self._callID:
 		    self._callID.cancel()
 		    self._callID = 0
 	    # convert time
-	    endtime = parse_time(args['eventtime'])
+	    if args.get('eventtime', False):
+		    endtime = parse_time(args['eventtime'])
+            else:
+		    # finish by request
+		    starttime = self._our_starttime
+		    endtime = date.time()
+                    endtime = self._starttime + (endtime - starttime)
 	    if self._starttime:
 	    	    totaltime = endtime - self._starttime
 		    self.apply_costs(totaltime)
@@ -159,6 +168,8 @@ class CallMonitor(object):
 
 class CallManager(object):
     def __init__(self):
+        global manager
+        manager = self
 	self._commands = {}
 	self._commands["HANGUP"] = self.on_hangup
 	self._commands["CHAN_START"] = self.on_chan_start
@@ -181,17 +192,19 @@ class CallManager(object):
 	    except:
 		print "ERROR on event", event
 		traceback.print_exc()
-	else:
+	elif not command in ['BRIDGE_START', 'BRIDGE_END']:
 	    self.write("? " + command + " " + str(event))
 
     def on_chan_start(self, args):
 	    app_uniqid = args['linkedid']
 	    if app_uniqid in self._calls:
 		    self._calls[app_uniqid].on_chan_start(args)
-	    self.write("chan start: " +  str(args) + " " + str(args['uniqueid']))
+	    #self.write("chan start: " +  str(args) + " " + str(args['uniqueid']))
 
     def on_app_start(self, args):
 	    app_from = args['calleridani'] # 3
+            if not app_from:
+	        app_from = args['calleridnum'] # 3
 	    app_to = args['calleriddnid'] # 5
 	    if not app_to:
 		provider = args['appdata'] # 10
@@ -200,13 +213,22 @@ class CallManager(object):
 			app_to = parts[2].split(",")[0]
 	    app_uniqid = args['linkedid']
 	    app_cost = args['accountcode']
-	    self.write("app start: " + app_from + " " + app_to + " " + str(args['linkedid']) + " " + str(args))
+	    #self.write("app start: " + app_from + " " + app_to + " " + str(args['linkedid']) + " " + str(args))
 	    if not app_uniqid in self._calls:
 		    self._calls[app_uniqid] = CallMonitor(app_uniqid, app_cost, app_from, app_to)
 		    self._calls[app_uniqid].on_app_start(args)
 
     def on_chan_end(self, args):
-	    self.write("chan end: " +  str(args) + " " + str(args['uniqueid']))
+	    #self.write("chan end: " +  str(args) + " " + str(args['uniqueid']))
+            pass
+
+    def reset_calls(self):
+	    self.write("reset all calls")
+            keys = self._calls.keys()
+	    for app_uniqid in keys:
+                self._calls[app_uniqid].on_hangup()
+                del self._calls[app_uniqid]
+	        self.write("hangup: " + str(app_uniqid))
 
     def on_hangup(self, args):
 	    #print "HANGUP", args
@@ -216,7 +238,7 @@ class CallManager(object):
 	    if app_uniqid in self._calls:
 		    self._calls[app_uniqid].on_hangup(args)
 		    del self._calls[app_uniqid]
-	    self.write("hangup: " + " " + str(args) + " " + str(args['uniqueid']))
+	    #self.write("hangup: " + " " + str(args) + " " + str(args['uniqueid']))
 
     def on_answer(self, args):
 	    app_uniqid = args['linkedid']
@@ -225,7 +247,7 @@ class CallManager(object):
 		    if res == False:
 			print "deleting from congestion"
 			del self._calls[app_uniqid]
-	    self.write("answer: " + str(args) + " " + args['uniqueid'])
+	    #self.write("answer: " + str(args) + " " + args['uniqueid'])
 
 if __name__ == '__main__':
 	from tail import tail

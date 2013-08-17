@@ -1,7 +1,9 @@
 import os
 
+from twisted.internet import reactor
 from twisted.web.resource import Resource
 from twisted.web.util import redirectTo
+from twisted.web.server import NOT_DONE_YET
 
 from obelisk import session
 from obelisk.templates import print_template
@@ -28,20 +30,25 @@ class TincResource(Resource):
 		return self.tinc.get_public_key()
 	user = session.get_user(request)
 	if user and user.admin:
-		content = self.render_tinc(request)
-	        #content = print_template('admin', {})
-	        return print_template('content-pbx-lorea', {'content': content})
+        	reactor.callInThread(self.render_tinc_thread, request)
+		return NOT_DONE_YET
 	else:
 		return redirectTo("/", request)
 
-    def render_tinc(self, request):
+    def render_tinc_thread(self, request):
 	t = Tinc()
 	output = '<h2>Tinc</h2>\n'
 	output += '<h3>Server</h3>\n'
 	output += '<p>name: %s ip: %s address: %s</p>\n' % (t.name, t.subnet, t.address)
 	output += '<h3>Peers</h3>\n'
 	output += self.render_tincpeers(request, t)
-	return output
+        result = print_template('content-pbx-lorea', {'content': output})
+
+        reactor.callFromThread(self.render_tinc_finish, request, result)
+
+    def render_tinc_finish(self, request, output):
+	request.write(output)
+        request.finish()
 
     def render_tincpeers(self, request, tinc):
 	res = [['name', 'address', 'subnet', 'signal']]

@@ -1,7 +1,9 @@
 import os
 
+from twisted.internet import reactor
 from twisted.web.resource import Resource
 from twisted.web.util import redirectTo
+from twisted.web.server import NOT_DONE_YET
 
 from obelisk import session
 from obelisk.templates import print_template
@@ -28,11 +30,19 @@ class DundiResource(Resource):
 		return self.dundi.get_public_key()
 	user = session.get_user(request)
 	if user and user.admin:
-		content = self.render_dundi(request)
-	        #content = print_template('admin', {})
-	        return print_template('content-pbx-lorea', {'content': content})
+        	reactor.callInThread(self.render_dundi_thread, request)
+		return NOT_DONE_YET
 	else:
 		return redirectTo("/", request)
+
+    def render_dundi_thread(self, request):
+	content = self.render_dundi(request)
+        result = print_template('content-pbx-lorea', {'content': content})
+        reactor.callFromThread(self.render_dundi_finish, request, result)
+
+    def render_dundi_finish(self, request, output):
+	request.write(output)
+        request.finish()
 
     def render_dundi(self, request):
 	d = self.dundi

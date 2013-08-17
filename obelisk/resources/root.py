@@ -30,11 +30,11 @@ from obelisk.templates import print_template
 from obelisk.pricechecker import get_winners
 
 from obelisk.rtcheckcalls import CallManager
-from obelisk.asterisk import ami
+from obelisk.asterisk import ami, cli
 
 from obelisk.testchannels import TestChannels
 from obelisk.resources import sse
-from obelisk.tools import ticker
+from obelisk.tools import ticker, host_info
 
 from obelisk import session
 
@@ -42,6 +42,7 @@ import obelisk
 
 class RootResource(Resource):
     def __init__(self):
+        self.alarm_set = False
         Resource.__init__(self)
 	ami.connect()
 	self.call_manager = CallManager()
@@ -80,9 +81,32 @@ class RootResource(Resource):
 
 	reactor.callLater(2, reactor.callInThread, self.get_winners)
 	reactor.callLater(4, reactor.callInThread, self.get_channel_test)
+        reactor.callLater(10, self.monitor_thread)
 	self.channel_tester = TestChannels()
         # start running the ticker
         ticker.ticker()
+
+    def run_alarms(self, reason, nclients):
+        print "Monitor clients", reason.upper(), nclients
+        if not self.alarm_set:
+            self.alarm_set = True
+            cli.run_command("channel originate SIP/ganesh extension 501@from-payuser")
+            cli.run_command("channel originate SIP/delirium extension 501@from-payuser")
+
+    def monitor_thread(self):
+        nclients = host_info.get_cli_clients()
+	if nclients < 40:
+            self.alarm_set = False
+            print "Monitor clients ok", nclients
+	elif nclients < 50:
+            print "Monitor clients danger", nclients
+	elif nclients < 100:
+            self.run_alarms('warning', nclients)
+	elif nclients < 128:
+            self.run_alarms('critical', nclients)
+	else:
+            self.run_alarms('possibly dead', nclients)
+	reactor.callLater(300, self.monitor_thread)
 
     def get_winners(self):
 	get_winners()

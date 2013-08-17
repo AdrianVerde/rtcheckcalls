@@ -46,7 +46,7 @@ class CreditResource(Resource):
 		except:
 			return redirectTo(request.path, request)
 		if section == 'add' and logged.admin:
-			user_ext = self.add_credit([args['user'], args['credit']])
+			user_ext = self.add_credit(logged, [args['user'], args['credit']])
 			return redirectTo("/user/" + user_ext, request)
 		elif section == 'transfer':
 			self.transfer_credit(logged, [args['user'], args['credit']])
@@ -68,10 +68,10 @@ class CreditResource(Resource):
 	credit = Decimal(args[1])
 	return accounting.transfer_credit(logged, user, credit)
 
-    def add_credit(self, args):
+    def add_credit(self, logged, args):
 	user = args[0]
 	credit = Decimal(args[1])
-	return accounting.add_credit(user, credit)
+	return accounting.add_credit(logged, user, credit)
 
     def getChild(self, name, request):
         return self

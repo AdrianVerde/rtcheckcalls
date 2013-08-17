@@ -157,6 +157,8 @@ def get_winners(daemon=False):
 	    for country in rates[provider]:
 		for type in rates[provider][country]:
 		    rate = str(rates[provider][country][type].strip())
+                    if rate == 'free-':
+                        rate = "FREE*"
 		    key = str(country)+" "+str(type)
 		    if not key in winners:
 			winners[key] = [rate, [provider]]

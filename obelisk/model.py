@@ -71,6 +71,9 @@ class Charge(Base):
 	id = Column(Integer, Sequence('charge_id_seq'), primary_key=True)
 	user_id = Column(ForeignKey('users.id'))
 	user = relationship("User", backref=backref('charges', order_by=id))
+	initiator_id = Column(Integer) # TODO add foreign key
+        funded = Column(Boolean, default=False)
+	#initiator = relationship("User", backref=backref('charged', order_by=id))
 
 	timestamp = Column(DateTime())
 	credit = Column(Numeric(10,6))
@@ -135,7 +138,7 @@ class Model(object):
 		#engine.execute("USE dbname")
 		#engine =create_engine('sqlite:///:memory:', echo=False)
 		#Session.configure(bind=self._engine)  # once engine is available
-		self.session = Session
+		self.session = Session()
 	def query(self, *args, **kargs):
 		return self.session.query(*args, **kargs)
 	def get_user(self, session_id):

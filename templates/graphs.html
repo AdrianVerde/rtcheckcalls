@@ -44,7 +44,8 @@
 			parameters.legend.data = ["coste", "beneficio"]
 		}
 		else if (graph_type.indexOf('charges') != -1) {
-			parameters.legend.data = ["credito"]
+                        parameters.colors =  ['#82293B', '#E57536', '#FFBE33'];
+			parameters.legend.data = ["credito", "transferencias", "btc"];
 		}
 		if (graph_type.indexOf('monthly') != -1)
 			$("#hints").html("mensual: 0 es el ultimo mes, -1 es 1 mes antes, etc... ");

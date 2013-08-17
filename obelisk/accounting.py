@@ -76,12 +76,12 @@ class Accounting(object):
 		self.model.session.commit()
 		self.update_user_context(user)
 		self.update_user_context(logged)
-		charges.add_charge(user.voip_id, credit, 'transferencia de ' + logged.voip_id)
-		charges.add_charge(logged.voip_id, -credit, 'transferencia a ' + user.voip_id)
+		charges.add_charge(logged, user.voip_id, credit, 'transferencia de ' + logged.voip_id)
+		charges.add_charge(logged, logged.voip_id, -credit, 'transferencia a ' + user.voip_id)
 		sse.resource.notify({'credit': float(user.credit), 'user': user.voip_id}, "credit", user)
 		sse.resource.notify({'credit': float(logged.credit), 'user': logged.voip_id}, "credit", logged)
 	
-	def add_credit(self, user_ext, credit, reason=""):
+	def add_credit(self, logged, user_ext, credit, reason=""):
 		from obelisk.resources import sse
 		user = self.get_user_for_credit(user_ext)
 		if not user:
@@ -89,7 +89,7 @@ class Accounting(object):
 		user.credit += Decimal(credit)
 		self.model.session.commit()
 		self.update_user_context(user)
-		charges.add_charge(user.voip_id, credit, reason)
+		charges.add_charge(logged, user.voip_id, credit, reason)
 		sse.resource.notify({'credit':float(user.credit), 'user':user.voip_id}, "credit", user)
 		return user.voip_id
 

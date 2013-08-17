@@ -4,6 +4,15 @@ filename = "/etc/asterisk/prefixes.conf"
 
 from obelisk.pricechecker import get_winners
 
+ext2country_cache = {}
+
+def update_cache(prices):
+    global ext2country_cache
+    for country in prices:
+        for label in prices[country]:
+            data = prices[country][label]
+            ext2country_cache[data[2].replace('+', '00')] = [country, label]
+
 def parse_prices():
 	f = open(filename, "r")
 
@@ -44,7 +53,26 @@ def parse_prices():
 			else:
 				prices[label][type] =  [price, provider, extension]
 	f.close()
+        update_cache(prices)
 	return prices
+
+def ext2country(ext):
+    if not ext2country_cache:
+        update_cache(parse_prices())
+    if ext == "0":
+        return ['bo', 'fh']
+    if len(ext) < 3:
+        return ['service', 'local']
+    if len(ext) < 5:
+        return ['extension', 'local']
+    if ext.startswith('00'):
+        if ext[0:5]  in ext2country_cache:
+            return ext2country_cache[ext[0:5]]
+        elif ext[0:4]  in ext2country_cache:
+            return ext2country_cache[ext[0:4]]
+        elif ext[0:3]  in ext2country_cache:
+            return ext2country_cache[ext[0:3]]
+    return ['unknown ', 'unknown']
 
 def list_prices():
 	prices = parse_prices()
@@ -88,5 +116,6 @@ def list_prices_json():
 
 
 if __name__ == "__main__":
+        ext2country("0034972267124")
 	parse_prices()
 	print list_prices_json()

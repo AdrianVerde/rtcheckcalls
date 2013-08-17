@@ -19,7 +19,6 @@ import json
 from obelisk.config import config
 from obelisk.model import Model, WebSession, User
 from obelisk.session import get_session, get_user, get_user_sessions
-import obelisk.resources.peers
 from obelisk.asterisk import ami
 from obelisk.resources import login
 
@@ -27,6 +26,7 @@ resource = None
 
 class SSEConnection(object):
     def __init__(self, request):
+        import obelisk.resources.peers
 	parts = request.path.split("/")
 	if len(parts) > 3:
 		user = parts[2]

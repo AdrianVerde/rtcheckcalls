@@ -24,6 +24,7 @@ manager.AMIFactory.protocol = PersistentAMIProtocol
 
 class AMIConnector(object):
 	def __init__(self):
+		self._shutdown = False
 		self.connect()
 		self._callbacks = defaultdict(list)
 
@@ -50,7 +51,15 @@ class AMIConnector(object):
 		print "login problem, wait 10 seconds to connect"
 		reactor.callLater(10, self.connect)
 
+	def resetCalls(self):
+		from obelisk import rtcheckcalls
+		print "Doing a hard reset"
+		rtcheckcalls.manager.reset_calls()
+
 	def onLogin(self, ami):
+		if self._shutdown:
+			self.resetCalls()
+                self._shutdown = False
 		print "login ok"
 		self.ami = ami
 		"""
@@ -62,6 +71,7 @@ class AMIConnector(object):
 		self.ami.registerEvent( 'ChannelReload', self.onReload)
 		"""
 		self.ami.registerEvent( 'Reload', self.onReload)
+		self.ami.registerEvent( 'Shutdown', self.onShutdown)
 		#self.ami.registerEvent( 'FullyBooted', self.onFullyBooted)
 		self.ami.registerEvent( 'CEL', self.runCallbacks)
 		self.ami.registerEvent( 'PeerStatus', self.runCallbacks)
@@ -84,6 +94,10 @@ class AMIConnector(object):
 	def onReload(self, ami, event):
 		print 'reload',event
 		reload_peers()
+
+	def onShutdown(self, ami, event):
+		self._shutdown = True
+		print 'shutdown',event
 
 	def onChannelHangup(self, ami, event):
 		print 'channel hangup',event

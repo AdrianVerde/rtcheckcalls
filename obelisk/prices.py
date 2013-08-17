@@ -43,10 +43,16 @@ def check_prices():
 					all_prices = []
 					all_providers = set()
 					for name in names:
-						if name[:-1] in ['freevoipdeal']:
+						if name in ['kali', 'shiva', 'opum']:
 							name = 'freevoipdeal'
-						if name[:-1] in ['budgetvoip']:
+						elif name[:-1] in ['freevoipdeal']:
+							name = 'freevoipdeal'
+						elif name[:-2] in ['freevoipdeal']:
+							name = 'freevoipdeal'
+						elif name[:-1] in ['budgetvoip']:
 							name = 'budgetvoip'
+						elif name[:-1] in ['hotvoip']:
+							name = 'hotvoip'
 						all_providers.add(name)
 						# XXX check if prices are the same for given country...
 						provider_prices = load_provider(name)

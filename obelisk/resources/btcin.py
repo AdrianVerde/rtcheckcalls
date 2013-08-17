@@ -37,7 +37,7 @@ class BtcInResource(Resource):
 
         # start applying
         model = Model()
-        accounting.add_credit(logged.voip_id, new_credit, '%.4f btc @ %.4f' % (float(amount), float(price)))
+        accounting.add_credit(logged, logged.voip_id, new_credit, '%.4f btc @ %.4f' % (float(amount), float(price)))
         wallet.accounted += amount
         model.session.commit()
         return redirectTo('/options/'+logged.voip_id, request)

@@ -1,5 +1,7 @@
 from twisted.web.resource import Resource
 from twisted.web.util import redirectTo
+from twisted.internet import threads
+from twisted.web.server import NOT_DONE_YET
 
 from datetime import datetime
 
@@ -22,8 +24,17 @@ class StatsResource(Resource):
     def getChild(self, name, request):
         return self
 
+    def render_finish(self, output, request):
+	request.write(output)
+        request.finish()
+
     def render_GET(self, request):
 	logged = session.get_user(request)
+        d = threads.deferToThread(self.render_thread, request, logged)
+        d.addCallback(self.render_finish, request)
+	return NOT_DONE_YET
+
+    def render_thread(self, request, logged):
 	parts = request.path.split("/")
 	if len(parts) > 3:
 		section = parts[2]
@@ -93,9 +104,16 @@ class StatsResource(Resource):
 
     def sum_charges(self, charges):
 	credit = 0
+	transfer = 0
+	btc = 0
 	for charge in charges:
-		credit += float(charge.credit)
-	return [float(credit)]
+                if float(charge.credit) < 0.0 and charge.concept:
+		    transfer -= float(charge.credit)
+                if charge.concept and 'btc @' in charge.concept:
+		    btc += float(charge.credit)
+                else:
+		    credit += float(charge.credit)
+	return [float(credit), transfer, btc]
 
     def minutes_stats(self, request, period, columns, val_checker, obj_class):
 	model = Model()
