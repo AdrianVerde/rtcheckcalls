@@ -2,6 +2,7 @@ import json
 import urllib2
 from twisted.internet import reactor
 from twisted.web.client import getPage
+from twisted.python import log
 
 import traceback
 import random
@@ -25,7 +26,7 @@ def ticker_update(data):
     global price
     data = json.loads(data)
     price = parse_results(data)
-    print "ticker update", price
+    log.msg("Update %s" % (price,), system='Ticker,mtgox')
 
 def ticker():
     global price
@@ -36,8 +37,8 @@ def ticker():
         d.addErrback(wait_and_tick)
     except:
         # call each 
-        print "Problems on ticker"
-        traceback.print_exc()
+        log.err("Problems on ticker", system='Ticker,mtgox')
+        log.err(traceback.format_exc(), system='Ticker,mtgox')
         wait_and_tick()
 
 if __name__ == '__main__':

@@ -191,7 +191,7 @@ class PeersResource(Resource):
 		if peer:
 			ext = peer.regexten
 
-		if ("OK" in line or "LAGGED" in line) and ext: # and "192.168." in line:
+		if (" OK" in line or "LAGGED" in line) and ext: # and "192.168." in line:
 			# line = self.add_ip_href(line)
 			dest = 'local'
 		elif ext:

@@ -13,9 +13,14 @@ def run_command(cmd):
 
 def get_cli_clients():
 	result = run_command(['/usr/bin/lsof', '/var/run/asterisk/asterisk.ctl'])
+	print result
         result = result.split("\n")
         return len(result)-1
-        
+
+def get_asterisk_processes():
+	result = run_command(['/bin/ps', 'ax', '-Lf'])
+	result = filter(lambda s: 'asterisk' in s, result.split('\n'))
+	return len(result)
 
 # uptime
 def get_obelisk_uptime():
@@ -94,6 +99,7 @@ def get_report_data():
 def get_report():
 	mem = get_memory()
 	asterisk_uptime = get_asterisk_uptime()
+        cli_connections = get_cli_clients()
 	output = ""
 	output += """<p><b>uptime</b>: %s</p>
 		<p><b>obelisk start time</b>: %s</p>
@@ -108,9 +114,10 @@ def get_report():
 		<p>obelisk: %.1f (%.1f) MB</p>
 		<p><b>free disk space</b>: %.1f GB</p>
 		<p><b>sse connections</b>: %d</p>
+		<p><b>cli connections</b>: %d</p>
 		<p><b>dundi peers</b>: %d</p>
 		<p><b>sip peers</b>: %d</p>
-	""" % (get_uptime(), time.ctime(obelisk.starttime), asterisk_uptime[0], asterisk_uptime[1], get_asterisk_version(), get_tinc_ip(), mem['total'], mem['free'], mem['self-memory'], mem['self-resident'], freespace("/") / (memory.MB * 1024), len(sse.resource._connections.keys()), get_dundi_peers(), get_sip_peers())
+	""" % (get_uptime(), time.ctime(obelisk.starttime), asterisk_uptime[0], asterisk_uptime[1], get_asterisk_version(), get_tinc_ip(), mem['total'], mem['free'], mem['self-memory'], mem['self-resident'], freespace("/") / (memory.MB * 1024), len(sse.resource._connections.keys()), cli_connections, get_dundi_peers(), get_sip_peers())
 
 	return output
 

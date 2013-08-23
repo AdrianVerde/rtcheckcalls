@@ -5,6 +5,7 @@ from twisted.web.static import File
 from twisted.web.wsgi import WSGIResource
 from twisted.internet import reactor
 from twisted.web.util import redirectTo, Redirect
+from twisted.python import log
 
 from obelisk.resources.peers import PeersResource
 from obelisk.resources.user import UserResource
@@ -86,27 +87,33 @@ class RootResource(Resource):
         # start running the ticker
         ticker.ticker()
 
-    def run_alarms(self, reason, nclients):
-        print "Monitor clients", reason.upper(), nclients
+    def run_alarms(self, reason, nclients, nproc):
+        log.err("%s (%s/128) (%s)" % (reason, nclients, nproc), system='CLI,monitor')
         if not self.alarm_set:
+            log.msg("Running alarms", system='CLI,monitor')
             self.alarm_set = True
-            cli.run_command("channel originate SIP/ganesh extension 501@from-payuser")
-            cli.run_command("channel originate SIP/delirium extension 501@from-payuser")
+            ext = obelisk.config.config.get('alert-extension', '501@from-payuser')
+            for name in obelisk.config.config.get('alert', []):
+                name = str(name)
+                log.msg("Calling %s" % (name,), system='CLI,monitor')
+                if len(name) > 2:
+                    cli.run_command("channel originate SIP/%s extension %s" % (name, ext))
 
     def monitor_thread(self):
         nclients = host_info.get_cli_clients()
+        nproc = host_info.get_asterisk_processes()
 	if nclients < 40:
             self.alarm_set = False
-            print "Monitor clients ok", nclients
+            log.msg("%s (%s/128) (%s)" % ('Ok', nclients, nproc), system='CLI,monitor')
 	elif nclients < 50:
-            print "Monitor clients danger", nclients
+            log.msg("%s (%s/128) (%s)" % ('Danger', nclients, nproc), system='CLI,monitor')
 	elif nclients < 100:
-            self.run_alarms('warning', nclients)
+            self.run_alarms('Warning', nclients, nproc)
 	elif nclients < 128:
-            self.run_alarms('critical', nclients)
+            self.run_alarms('Critical', nclients, nproc)
 	else:
-            self.run_alarms('possibly dead', nclients)
-	reactor.callLater(300, self.monitor_thread)
+            self.run_alarms('Possibly Dead', nclients, nproc)
+	reactor.callLater(120, self.monitor_thread)
 
     def get_winners(self):
 	get_winners()

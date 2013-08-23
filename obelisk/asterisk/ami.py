@@ -1,4 +1,5 @@
 from twisted.internet import reactor
+from twisted.python import log
 from starpy import manager
 from collections import defaultdict
 import base64
@@ -16,7 +17,7 @@ def connect():
 class PersistentAMIProtocol(manager.AMIProtocol):
 	def connectionLost( self, reason ):
 		global connector
-		print "disconnected wait 5 seconds to connect", reason
+		log.err("disconnected wait 5 seconds to connect %s" % (reason,), system='AMI')
 		reactor.callLater(5, connector.connect)
 		return manager.AMIProtocol.connectionLost(self, reason)
 
@@ -27,6 +28,9 @@ class AMIConnector(object):
 		self._shutdown = False
 		self.connect()
 		self._callbacks = defaultdict(list)
+
+        def log(self, text):
+                log.msg(str(text), sytem='AMI')
 
 	def registerEvent(self, event, cb):
 		self._callbacks[event].append(cb)
@@ -48,19 +52,18 @@ class AMIConnector(object):
 		df.addErrback(self.onLoginError)
 
 	def onLoginError(self, *args):
-		print "login problem, wait 10 seconds to connect"
+		log.err("Login problem, wait 10 seconds to connect", system='AMI')
 		reactor.callLater(10, self.connect)
 
 	def resetCalls(self):
 		from obelisk import rtcheckcalls
-		print "Doing a hard reset"
+		self.log("Doing a hard reset")
 		rtcheckcalls.manager.reset_calls()
 
 	def onLogin(self, ami):
 		if self._shutdown:
 			self.resetCalls()
                 self._shutdown = False
-		print "login ok"
 		self.ami = ami
 		"""
 		self.ami.registerEvent( 'Hangup', self.onChannelHangup)
@@ -70,15 +73,18 @@ class AMIConnector(object):
 		self.ami.registerEvent( 'ExtensionStatus', self.onPeerStatus)
 		self.ami.registerEvent( 'ChannelReload', self.onReload)
 		"""
-		self.ami.registerEvent( 'Reload', self.onReload)
-		self.ami.registerEvent( 'Shutdown', self.onShutdown)
-		#self.ami.registerEvent( 'FullyBooted', self.onFullyBooted)
-		self.ami.registerEvent( 'CEL', self.runCallbacks)
-		self.ami.registerEvent( 'PeerStatus', self.runCallbacks)
+		self.ami.registerEvent('Shutdown', self.onShutdown)
+		#self.ami.registerEvent('FullyBooted', self.onFullyBooted)
+		self.ami.registerEvent('CEL', self.runCallbacks)
+		self.ami.registerEvent('PeerStatus', self.runCallbacks)
+		self.ami.registerEvent('Reload', self.onReload)
+		self.ami.registerEvent('VarSet', self.onVarSet)
+		self.log("Login ok")
 		reload_peers()
 
 	def onFullyBooted(self, ami, event):
-		self.sendMessage('"admin" <sip:admin@pbx.lorea.org>', 'sip:caedes_roam', 'all systems functional')
+		print 'FullyBooted',event
+		#self.sendMessage('"admin" <sip:admin@pbx.lorea.org>', 'sip:caedes_roam', 'all systems functional')
 		#self.sendAction('MailboxStatus', mailbox='6001')
 		#self.sendAction('MailboxCount', mailbox='6001')
 		#self.sendAction('SIPshowregistry')
@@ -91,13 +97,17 @@ class AMIConnector(object):
 	def onPeerStatus(self, ami, event):
 		print 'peerstate', event
 
+	def onVarSet(self, ami, event):
+                if event.get('variable','') == 'puertorico-fixmob-provider':
+                        self.onReload(ami, event)
+
 	def onReload(self, ami, event):
-		print 'reload',event
+		self.log('Reload (%s)' % (event.get('event', 'Unknown'),))
 		reload_peers()
 
 	def onShutdown(self, ami, event):
 		self._shutdown = True
-		print 'shutdown',event
+		self.log('Shutdown %s' % (str(event),))
 
 	def onChannelHangup(self, ami, event):
 		print 'channel hangup',event

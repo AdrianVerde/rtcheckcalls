@@ -21,7 +21,6 @@ from obelisk.templates import print_template
 
 class UserResource(Resource):
     def __init__(self):
-	print "INIT ACCOUNT RESOURCE"
 	Resource.__init__(self)
 	self._accounting = accounting
 
@@ -83,7 +82,7 @@ class UserResource(Resource):
 		else:
 			username = "desconocido"
 		
-		res += "<p>%s <a href='/user/%s'>%s</a> %.3f</p>" % (str(ext), str(ext), str(username), credit)
+		res += "<p>%s <a href='/user/%s'>%s</a> %.3f %s</p>" % (str(ext), str(ext), str(username), credit, str(user.email))
 		total_credit += Decimal(credit)
 	res += "<p>total credit: %s</p>" % (total_credit,)
 	return res

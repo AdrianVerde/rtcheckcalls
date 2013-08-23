@@ -30,9 +30,7 @@ class StatsResource(Resource):
 
     def render_GET(self, request):
 	logged = session.get_user(request)
-        d = threads.deferToThread(self.render_thread, request, logged)
-        d.addCallback(self.render_finish, request)
-	return NOT_DONE_YET
+        return self.render_thread(request, logged)
 
     def render_thread(self, request, logged):
 	parts = request.path.split("/")
