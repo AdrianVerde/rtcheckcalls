@@ -1,6 +1,7 @@
 {"url": "https://voip.lorea.org",
  "domain": "voip.lorea.org",
  "logo": "voip.lorea.org",
+ "port": "80",
  "fingerprint": "32123FAAAF123123123",
  "db": {"user": "obelisk",
  	"password": "PASSWORD",

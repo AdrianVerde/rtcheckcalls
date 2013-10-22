@@ -97,7 +97,7 @@ class SSEResource(Resource):
 
 	event -- event data (dict)
 	"""
-	self.notify(event, 'rtcheckcalls', 'all')
+	self.notify(event, 'rtcheckcalls', 'admin')
 
     def getChild(self, name, request):
 	"""
@@ -119,6 +119,8 @@ class SSEResource(Resource):
 	sessions = []
 	if user == 'all':
 		sessions = 'all'
+	elif user == 'admin':
+		sessions = []
 	elif user:
 		sessions = get_user_sessions(user)
 		sessions = map(lambda s: s.session_id, sessions)
@@ -168,7 +170,6 @@ class SSEResource(Resource):
 		login.resource.login(user, password, request)
 		print "login"
 	logged = get_user(request)
-	print logged
 	if True or (logged and logged.admin):
 		d = deferLater(reactor, 1, lambda: request)
 		d.addCallback(self._delayedRender)

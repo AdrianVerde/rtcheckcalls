@@ -4,6 +4,7 @@ from twisted.web.util import redirectTo
 from datetime import datetime
 
 import md5
+import json
 
 from obelisk.config import config
 from obelisk.model import Model, WebSession, User
@@ -46,6 +47,7 @@ class LoginResource(Resource):
 	return False
 
     def login(self, login, password, request, email=''):
+        action = request.args.get('action', ['login'])
 	peer = self.check_password(login, password)
 	if peer:
 		user_ext = peer.regexten
@@ -64,5 +66,8 @@ class LoginResource(Resource):
 
 		model.session.add(web_session)
 		model.session.commit()
-		return redirectTo("/user/"+user_ext, request)
+                if action == 'login':
+		    return redirectTo("/user/"+user_ext, request)
+                elif action == 'login_agent':
+		    return json.dumps({'user': user_ext, 'credit': float(user.credit), 'admin': user.admin})
 	return redirectTo("/", request)

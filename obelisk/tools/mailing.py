@@ -30,6 +30,9 @@ def send(destination, subject, body):
     s.sendmail(sender, [destination], msg.as_string())
     s.quit()
 
+def admin_send(subject, body):
+    send(config['mail']['sender'], subject, body)
+
 def mass_send(subject, body, password):
     """
     Sends mail to all users.

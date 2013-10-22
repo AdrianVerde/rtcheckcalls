@@ -7,13 +7,27 @@ import time
 import obelisk
 from obelisk.asterisk import cli
 from obelisk.resources import sse
+from obelisk.config import config
 
 def run_command(cmd):
 	return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 
+def asterisk_restart():
+	return run_command(['/usr/sbin/service', 'asterisk', 'restart'])
+
+def generate_logs():
+        check_file = config.get('check', '/null')
+        log_file = config['log']['dump']
+	if os.path.exists(check_file):
+		result = run_command(['/bin/bash', check_file])
+		f = open(log_file, 'w')
+		f.write(result)
+		f.close()
+		return result
+	return "Script no existe!!"
+
 def get_cli_clients():
 	result = run_command(['/usr/bin/lsof', '/var/run/asterisk/asterisk.ctl'])
-	print result
         result = result.split("\n")
         return len(result)-1
 

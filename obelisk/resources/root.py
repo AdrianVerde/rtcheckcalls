@@ -35,7 +35,7 @@ from obelisk.asterisk import ami, cli
 
 from obelisk.testchannels import TestChannels
 from obelisk.resources import sse
-from obelisk.tools import ticker, host_info
+from obelisk.tools import ticker, host_info, mailing
 
 from obelisk import session
 
@@ -81,9 +81,9 @@ class RootResource(Resource):
 	self.putChild('node.json', Redirect('/pln/node.json'))
 
 	reactor.callLater(2, reactor.callInThread, self.get_winners)
-	reactor.callLater(4, reactor.callInThread, self.get_channel_test)
+	#reactor.callLater(4, reactor.callInThread, self.get_channel_test)
         reactor.callLater(10, self.monitor_thread)
-	self.channel_tester = TestChannels()
+	#self.channel_tester = TestChannels()
         # start running the ticker
         ticker.ticker()
 
@@ -92,24 +92,28 @@ class RootResource(Resource):
         if not self.alarm_set:
             log.msg("Running alarms", system='CLI,monitor')
             self.alarm_set = True
-            ext = obelisk.config.config.get('alert-extension', '501@from-payuser')
-            for name in obelisk.config.config.get('alert', []):
-                name = str(name)
-                log.msg("Calling %s" % (name,), system='CLI,monitor')
-                if len(name) > 2:
-                    cli.run_command("channel originate SIP/%s extension %s" % (name, ext))
+            # restart asterisk, should check if there are ongoing calls
+            host_info.generate_logs()
+            host_info.asterisk_restart()
+            mailing.admin_send('Asterisk restarted', 'Restarted due to critical number of cli connections %s %s' % (nclients, nproc))
+            #ext = obelisk.config.config.get('alert-extension', '501@from-payuser')
+            #for name in obelisk.config.config.get('alert', []):
+            #    name = str(name)
+            #    log.msg("Calling %s" % (name,), system='CLI,monitor')
+            #    if len(name) > 2:
+            #        cli.run_command("channel originate SIP/%s extension %s" % (name, ext))
 
     def monitor_thread(self):
         nclients = host_info.get_cli_clients()
         nproc = host_info.get_asterisk_processes()
-	if nclients < 40:
+	if nclients < 7:
             self.alarm_set = False
             log.msg("%s (%s/128) (%s)" % ('Ok', nclients, nproc), system='CLI,monitor')
-	elif nclients < 50:
+	elif nclients < 10:
             log.msg("%s (%s/128) (%s)" % ('Danger', nclients, nproc), system='CLI,monitor')
-	elif nclients < 100:
+	elif nclients < 20:
             self.run_alarms('Warning', nclients, nproc)
-	elif nclients < 128:
+	elif nclients < 80:
             self.run_alarms('Critical', nclients, nproc)
 	else:
             self.run_alarms('Possibly Dead', nclients, nproc)

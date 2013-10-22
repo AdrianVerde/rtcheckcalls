@@ -44,10 +44,10 @@ class PeersResource(Resource):
 			event['srtp'] = True
 		else:
 			event['srtp'] = False
-		sse.resource.notify(event, 'peer' ,'all')
+		sse.resource.notify(event, 'peer' ,'admin')
 	else:
 		event['channel'] = True
-		sse.resource.notify(event, 'peer' ,'all')
+		sse.resource.notify(event, 'peer' ,'admin')
     def get_extension(self, line, dialplan):
 	try:
 	    name = line.split(" ", 1)[0].split("/")[0]
@@ -62,7 +62,7 @@ class PeersResource(Resource):
 	return dialplan_line[ext_start+1: dialplan_line.find("'", ext_start+1)]
     def get_peers_loop(self):
 	peers = self.get_peers()
-	reactor.callFromThread(sse.resource.notify, peers, 'peers' ,'all')
+	reactor.callFromThread(sse.resource.notify, peers, 'peers' ,'admin')
 	reactor.callLater(5, reactor.callInThread, self.get_peers_loop)
     def get_peers(self):
 	model = Model()

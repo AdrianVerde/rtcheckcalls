@@ -152,7 +152,7 @@
 							}
 							text += '</strong>';
 							//text += ' (' + code + ')</strong>';
-							text += '<br />Fix: '+prices[code].fix;
+							text += '<br />Fix: '+currprice.fix;
 							if (currprice.hasOwnProperty('extfix')) {
 								text += ' ('+currprice.extfix+')';
 							}
@@ -173,6 +173,13 @@
 								text += '<br />Mob: '+currprice.mob2;
 								if (currprice.hasOwnProperty('extmob2')) {
 									text += ' ('+currprice.extmob2+')';
+								}
+							}
+							text += '<br />';
+							for (var prop in currprice) {
+								if ($.inArray(prop, ['fix', 'mob', 'fix2', 'mob2', 'extmob', 'ext']) <= -1) {
+									console.log(prop);
+								    text += '<br />'+prop+': '+currprice[prop];
 								}
 							}
 							label.html(text);
