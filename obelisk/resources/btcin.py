@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from twisted.web.resource import Resource
 from twisted.web.util import redirectTo
+from twisted.python import log
 
 from obelisk.resources import sse
 
@@ -55,9 +56,10 @@ class BtcInResource(Resource):
             return "invalid signature"
         data = json.loads(json_data)
         address = data['address']
-        balance = data['balance2']
+        balance = data['unconfirmed']
         balance_confirmed = data['balance']
         timestamp = data['timestamp']
+        log.msg("btc %s: %s (+%s)" %(address, balance_confirmed, balance), system='BTC,input')
         self.apply_transaction(address, balance, balance_confirmed, timestamp)
         return "ok"
 
@@ -78,7 +80,7 @@ class BtcInResource(Resource):
 
             # XXX need to add a mechanism to account credit (convert to euros)
             #user.credit += new_coins
-            print "applied transaction", balance_confirmed, balance_unconfirmed, user, user.voip_id
+            log.msg("btc %s/%s: %s (+%s)" %(address, user.voip_id, balance_confirmed, balance_unconfirmed), system='BTC,tx')
             model.session.commit()
             sse.resource.notify(
                 {'confirmed': float(balance_confirmed), 'unconfirmed': float(balance_unconfirmed), 'currency': 'BTC'},
