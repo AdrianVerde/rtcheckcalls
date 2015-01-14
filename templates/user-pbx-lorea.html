@@ -7,23 +7,17 @@
 		<meta charset="UTF-8">
 		<style type="text/css"></style>
 		<link rel="stylesheet" href="/tpl/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/tpl/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="/tpl/css/bootstrap-theme.min.cssa">
 		<link rel="stylesheet" href="/tpl/css/main.css">
     		
 	</head>
 
 	<body>
 	
-	<nav class="navbar navbar-default" style="border-radius: 0px;">
+	<nav class="navbar navbar-inverse" style="border-radius: 0px;">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
       <a class="navbar-brand" href="/">%%logo%%</a>
     </div>
 	
@@ -43,29 +37,23 @@
             <li><a href="/logout">logout</a></li>
           </ul>
         </li>
-		<!-- <li><a href="#">Link</a></li> -->
       </ul>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
   </div><!-- /.container-fluid -->
 </nav>
 
 <div class="container col-md-6 col-md-offset-3">
 
-<div class="panel panel-info">
-  <div class="panel-heading">
-    <h3 class="panel-title">Datos Usuario</h3>
-  </div>
-  
+<div class="panel panel-default userdata">  
 	<ul class="list-group">
-    <li class="list-group-item"><strong>Crédito:</strong> %%credit%% %%credit_link%%</li>
-    <li class="list-group-item"><strong>Numero PLN:</strong> 0000 10 %%ext%%</li>
+    <li class="list-group-item"><strong>Crédito:</strong> <span>%%credit%% %%credit_link%%</span></li>
+    <li class="list-group-item"><strong>Numero PLN:</strong> <span>0000 10 %%ext%%</span></li>
 	</ul>
 </div>
 
 
 
-	<div class="panel panel-default">
+	<div class="panel panel-default facturacion">
       <!-- Default panel contents -->
       <div class="panel-heading">
 	  <h3 class="panel-title">Facturación</h3>
@@ -79,14 +67,17 @@
             <th>Destino</th>
             <th>Duración</th>
             <th>Coste de la llamada</th>
-			<th>Precio por minuto</th>									
+			<th>Precio por minuto</th>
+			<th></th>									
           </tr>
         </thead>
-        <tbody>
+        <tbody id="accounting_tbody">
         %%calls%%
         </tbody>
       </table>
-	  
+	</div>
+	
+	<div class="panel panel-default recargas">
 	  <div class="panel-heading">
 	  <h3 class="panel-title">Recargas</h3>
 	  </div>
@@ -103,7 +94,9 @@
         %%charges%%
         </tbody>
       </table>
-	  
+	</div>
+	
+	<div class="panel panel-default llamadas">
 	  <div class="panel-heading">
 	  <h3 class="panel-title">Llamadas</h3>
 	  </div>
@@ -122,7 +115,6 @@
         %%all_calls%%
         </tbody>
       </table>
-	  
     </div>
 	
 	

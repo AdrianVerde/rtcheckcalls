@@ -1,3 +1,80 @@
 body{
-/* padding-top: 50px; */
+background-color:#222;
+}
+
+ul.list-group, li.list-group-item{
+background-color:transparent;
+border: none;
+}
+
+.panel.panel-default{
+border-color:transparent;
+color: black;
+}
+
+.panel.panel-default.userdata{
+color: black;
+border-color:transparent;
+color:#EEEEEE;
+-webkit-box-shadow: none;
+box-shadow: none;
+text-shadow: 0px 0px 7px #1FF;
+}
+
+.panel.panel-default.userdata ul li span{
+text-shadow: 0px 0px 7px #FF5C00;
+}
+
+.panel.panel-default.userdata ul li span a{
+text-shadow: 0px 0px 7px #1FF;
+color: azure;
+text-decoration: underline;
+}
+
+.navbar-brand{
+color:white!important;
+text-shadow: 0px 0px 8px #1FF;
+}
+
+.navbar-brand:hover{
+text-shadow: 0px 0px 12px #1FF;
+}
+
+.panel .panel-heading{
+background-color:#555;
+color:white;
+border-color:transparent;
+text-shadow: 0px 0px 8px #1FF;
+}
+
+.panel .panel-heading h3{
+font-weight:700;
+}
+
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td{
+border:none;
+}
+
+a{
+color:#0000EE;
+}
+
+a:hover{
+color:#0000EE;
+}
+
+.facturacion{
+background-color:#FFE30D;
+}
+
+.recargas{
+background-color:#7DA4DB;
+}
+
+.llamadas{
+background-color:#FF2989;
+}
+
+.userdata{
+background-color:transparent;
 }
