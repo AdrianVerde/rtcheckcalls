@@ -6,88 +6,123 @@
 		<title>Lorea PBX - home - %%ext%%</title>
 		<meta charset="UTF-8">
 		<style type="text/css"></style>
-		<link rel="stylesheet" href="/tpl/user-pbx-lorea.css">
-    		<script type="text/javascript" src="/tpl/js/jquery.js"></script>
-    		<script type="text/javascript" src="/tpl/js/obelisk.js"></script>
+		<link rel="stylesheet" href="/tpl/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/tpl/css/bootstrap-theme.min.cssa">
+		<link rel="stylesheet" href="/tpl/css/main.css">
+    		
 	</head>
 
 	<body>
-		<div id="main-wrapper">
-			<header id="header">
-				<a href="/">inicio</a>
-				<a href="/options/%%ext%%">opciones</a>
-			        <a href="/voicemail/%%ext%%">correo de voz</a>
-				<div id="logo">%%logo%%</div>				
-				<dl id="user">
-						<dt class="title-user"><h2>Usuario</h2></dt>
-							<dd class="username">%%username%%</dd>
-						<dt class="user-credit-title">Crédito</dt>
-							<dd class="user-credit">%%credit%%</dd>
-							<dd class="user-credit">%%credit_link%%</dd>
-						<dt class="user-number-title">Numero PLN</dt>
-							<dd class="user-number">0000 10 %%ext%%</dd>
-				</dl>
-			</header>
-			
-			<div id="content">
+	
+	<nav class="navbar navbar-inverse" style="border-radius: 0px;">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">%%logo%%</a>
+    </div>
+	
+	<ul class="nav navbar-nav">
+        <li class="active"><a href="#">Mis Datos</a></li>
+        <li><a href="/voip">Listado Telefónico</a></li>
+		<li><a href="/stats">Estadísticas</a></li>
+	</ul>
+	
+	 <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">%%username%% <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+			<li><a href="/voicemail/%%ext%%">correo de voz</a></li>
+            <li><a href="/options/%%ext%%">opciones</a></li>
+            <li class="divider"></li>
+            <li><a href="/logout">logout</a></li>
+          </ul>
+        </li>
+      </ul>
 
-				<section id="facturacion">
-					<h2>Facturacion</h2>
-						<table>
-							<thead>
-								<tr>
-									<td>Fecha</td>
-									<td>Destino</td>
-									<td>Duración</td>
-									<td>coste de la llamada</td>
-									<td>Precio por minuto</td>
-								</tr>
-							</thead>
-							<tbody id='accounting_tbody'>
-								%%calls%%
-							</tbody>
-						</table>
-					</section>
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container col-md-6 col-md-offset-3">
+
+<div class="panel panel-default userdata">  
+	<ul class="list-group">
+    <li class="list-group-item"><strong>Crédito:</strong> <span>%%credit%% %%credit_link%%</span></li>
+    <li class="list-group-item"><strong>Numero PLN:</strong> <span>0000 10 %%ext%%</span></li>
+	</ul>
+</div>
 
 
-				<section id="recargas">
-					<h2>Recargas</h2>
-						<table>
-							<thead>
-								<tr>
-									<td>Fecha de la recarga</td>
-									<td>Monto</td>
-									<td>Quien realizó la recarga</td>
-								</tr>
-							</thead>
-							<tbody>
-								%%charges%%
-							</tbody>
-						</table>	
-				</section>
-				<section id="calls">
-					<h2>Llamadas</h2>
-						<table>
-							<thead>
-								<tr>
-									<td>Fecha</td>
-									<td>Numero de origen</td>
-									<td>Destino</td>
-									<td>Duración</td>
-									<td>Resultado</td>
-								</tr>
-							</thead>
-							<tbody>
-								%%all_calls%%
-							</tbody>
-						</table>				
-				</section>
 
-			</div>
-      <!------ fin del content ---- -->
-			<footer id="footer"><a href="/logout">logout</a>
-					    <a href="/password/%%ext%%">change pass</a></footer>
-		</div>
+	<div class="panel panel-default facturacion">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+	  <h3 class="panel-title">Facturación</h3>
+	  </div>
+
+      <!-- Table -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Destino</th>
+            <th>Duración</th>
+            <th>Coste de la llamada</th>
+			<th>Precio por minuto</th>
+			<th></th>									
+          </tr>
+        </thead>
+        <tbody id="accounting_tbody">
+        %%calls%%
+        </tbody>
+      </table>
+	</div>
+	
+	<div class="panel panel-default recargas">
+	  <div class="panel-heading">
+	  <h3 class="panel-title">Recargas</h3>
+	  </div>
+	  
+	  <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cantidad</th>
+            <th>Realizada por</th>
+          </tr>
+        </thead>
+        <tbody>
+        %%charges%%
+        </tbody>
+      </table>
+	</div>
+	
+	<div class="panel panel-default llamadas">
+	  <div class="panel-heading">
+	  <h3 class="panel-title">Llamadas</h3>
+	  </div>
+	  
+	  <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+			<th>Numero de origen</th>
+			<th>Destino</th>
+            <th>Duración</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+        %%all_calls%%
+        </tbody>
+      </table>
+    </div>
+	
+	
+	
+</div>
+		<script type="text/javascript" src="/tpl/js/jquery-1.11.1.min.js"></script>
+    	<script type="text/javascript" src="/tpl/js/obelisk.js"></script>
+		<script type="text/javascript" src="/tpl/js/bootstrap.min.js"></script>
 	</body>
 
 </html>
