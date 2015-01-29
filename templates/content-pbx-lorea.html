@@ -15,13 +15,13 @@
       <a class="navbar-brand" href="/">%%logo%%</a>
     </div>
 	
-	<ul class="nav navbar-nav">
+	<ul id="leftnav" class="nav navbar-nav">
         <li><a href="/user/%%user%%">Mis Datos</a></li>
         <li id="voip"><a href="/voip">Listado Telefónico</a></li>
 		<li id="stats"><a href="/stats">Estadísticas</a></li>
 	</ul>
 	
-	 <ul class="nav navbar-nav navbar-right">
+	 <ul id="rightnav" class="nav navbar-nav navbar-right">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">%%username%% <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
@@ -45,7 +45,7 @@
 </div>
 
 <footer>
-    <div class="navbar navbar-inverse navbar-static-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
                 <ul class="nav navbar-nav pull-right">
 				<li id="docs"><a href="/docs">Documentación</a></li>
 				<li id="prices"><a href="/prices">Precios</a></li>
@@ -68,9 +68,11 @@
 	<script type="text/javascript" src="/tpl/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
-	var path = window.location.pathname;
-	var correct_path = path.substr(1);
-	$("#" + correct_path).addClass("active");
+	var path = window.location.pathname.substr(1);
+	$("#" + path).addClass("active");
+	if(path=="register"){
+	$("#rightnav, #leftnav").hide();
+	}
 	});	
 	</script>
 	</body>
