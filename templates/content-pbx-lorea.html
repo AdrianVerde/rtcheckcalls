@@ -15,7 +15,7 @@
       <a class="navbar-brand" href="/">%%logo%%</a>
     </div>
 	
-	<ul class="nav navbar-nav">
+	<ul id="leftnav" class="nav navbar-nav">
         <li><a href="/user/%%user%%">Mis Datos</a></li>
         <li id="voip"><a href="/voip">Listado Telefónico</a></li>
 		<li id="stats"><a href="/stats">Estadísticas</a></li>
@@ -45,7 +45,7 @@
 </div>
 
 <footer>
-    <div class="navbar navbar-inverse navbar-static-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
                 <ul class="nav navbar-nav pull-right">
 				<li id="docs"><a href="/docs">Documentación</a></li>
 				<li id="prices"><a href="/prices">Precios</a></li>
@@ -71,7 +71,7 @@
 	var path = window.location.pathname.substr(1);
 	$("#" + path).addClass("active");
 	if(path=="register"){
-	$("#rightnav").hide();
+	$("#rightnav, #leftnav").hide();
 	}
 	});	
 	</script>

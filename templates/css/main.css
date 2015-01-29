@@ -1,5 +1,6 @@
 body{
 background-color:#222;
+color:#CCC;
 }
 
 ul.list-group, li.list-group-item{
@@ -83,21 +84,18 @@ background-color:transparent;
 float:right;
 }
 
-#portada{
+#content{
 color:#CCC;
 }
 
-#portada a{
+#content a{
 color:#FFF;
 font-weight:bold;
 text-decoration:underline;
 }
 
-footer {
-   position:absolute;
-   bottom:0;
-   width:100%;
-   height:50px;
+#content .form-group h1{
+color:#333;
 }
 
 footer .navbar{
