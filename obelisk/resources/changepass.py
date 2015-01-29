@@ -49,8 +49,9 @@ class ChangePassResource(Resource):
 		user_ext = logged.voip_id
 	
 	content = print_template('password', {'ext': user_ext})
-        peer = model.query(SipPeer).filter_by(regexten=logged.voip_id).first()
-	return print_template('content-pbx-lorea', {'content': content, 'username': peer.name, 'user': logged.voip_id})
+        model = Model()
+        peer = model.query(SipPeer).filter_by(regexten=user_ext).first()
+	return print_template('content-pbx-lorea', {'content': content, 'username': peer.name, 'user': user_ext})
 
     def getChild(self, name, request):
         return self

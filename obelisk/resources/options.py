@@ -69,8 +69,8 @@ class OptionsResource(Resource):
         else:
             return redirectTo('/', request)
 	content = print_template('options', args)
-        peer = model.query(SipPeer).filter_by(regexten=logged.voip_id).first()
-	return print_template('content-pbx-lorea', {'content': content, 'user': logged.voip_id, 'username': peer.name})
+        peer = model.query(SipPeer).filter_by(regexten=user_ext).first()
+	return print_template('content-pbx-lorea', {'content': content, 'user': user_ext, 'username': peer.name})
 
     def render_btc(self, logged, user, wallet):
         address = wallet.get_address(user.id)
