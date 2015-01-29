@@ -90,7 +90,6 @@ color:#CCC;
 
 #content a{
 color:#FFF;
-font-weight:bold;
 text-decoration:underline;
 }
 
@@ -102,6 +101,12 @@ footer .navbar{
 border:none;
 background:none;
 margin-bottom:0px;
+}
+
+footer .navbar a{
+color: #9d9d9d;
+font-weight:normal;
+text-decoration:none;
 }
 
 .darkform{

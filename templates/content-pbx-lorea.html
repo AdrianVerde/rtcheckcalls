@@ -70,8 +70,8 @@
 	$(document).ready(function(){
 	var path = window.location.pathname.substr(1);
 	$("#" + path).addClass("active");
-	if(path=="register"){
-	$("#rightnav, #leftnav").hide();
+	if(path!=="register" || path!=="docs"){
+	$("#rightnav, #leftnav").show();
 	}
 	});	
 	</script>
