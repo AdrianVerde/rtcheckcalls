@@ -1,9 +1,16 @@
 from obelisk.config import config
 
+tpl_cache = {}
+
 def print_template(name, variables):
-	f = open('templates/'+name+'.html')
-	data = f.read()
-	f.close()
+        if not tpl_cache.get(name):
+	    f = open('templates/'+name+'.html')
+	    data = f.read()
+	    f.close()
+            tpl_cache[name] = data
+
+        data = tpl_cache[name]
+
 	if 'logo' in config:
 		variables['logo'] = config['logo']
 	else:
