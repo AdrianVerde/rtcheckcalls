@@ -66,8 +66,8 @@ class LoginResource(Resource):
 
 		model.session.add(web_session)
 		model.session.commit()
-                if action == 'login':
+                if action[0] == 'login':
 		    return redirectTo("/user/"+user_ext, request)
-                elif action == 'login_agent':
+                elif action[0] == 'login_agent':
 		    return json.dumps({'user': user_ext, 'credit': float(user.credit), 'admin': user.admin})
 	return redirectTo("/", request)

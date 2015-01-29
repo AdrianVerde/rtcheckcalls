@@ -5,6 +5,7 @@ from obelisk import session
 
 from obelisk.model import Model
 from obelisk.resources import login
+from obelisk.asterisk.model import SipPeer
 
 from obelisk.templates import print_template
 from obelisk.asterisk.users import change_password
@@ -48,7 +49,9 @@ class ChangePassResource(Resource):
 		user_ext = logged.voip_id
 	
 	content = print_template('password', {'ext': user_ext})
-	return print_template('content-pbx-lorea', {'content': content})
+        model = Model()
+        peer = model.query(SipPeer).filter_by(regexten=user_ext).first()
+	return print_template('content-pbx-lorea', {'content': content, 'username': peer.name, 'user': user_ext})
 
     def getChild(self, name, request):
         return self

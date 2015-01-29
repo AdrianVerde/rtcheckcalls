@@ -96,7 +96,9 @@ class VoiceMailResource(Resource):
 	request.setHeader('Cache-Control', 'no-cache, must-revalidate') # http1.1
 	request.setHeader('Pragma', 'no-cache') # http1.0
 	res = self.render_mailbox(user_ext)
-	return print_template('content-pbx-lorea', {'content': res})
+        model = Model()
+        peer = model.query(SipPeer).filter_by(regexten=user_ext).first()
+	return print_template('content-pbx-lorea', {'content': res, 'user': user_ext, 'username': peer.name})
 
     def render_voice_message(self, request, logged, msg_id):
 	model = Model()

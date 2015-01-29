@@ -229,5 +229,6 @@ class PeersResource(Resource):
 	res += "</pre><pre>"
 	res += cli.run_command('core show uptime')
 	res += "</pre>"
-	return print_template('content-pbx-lorea', {'content': res})
+        peer = model.query(SipPeer).filter_by(regexten=user.voip_id).first()
+	return print_template('content-pbx-lorea', {'content': res, 'username': peer.name, 'user': user.voip_id})
 
