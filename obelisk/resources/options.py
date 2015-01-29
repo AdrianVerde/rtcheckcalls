@@ -4,6 +4,7 @@ from twisted.web.util import redirectTo
 from obelisk import session
 
 from obelisk.model import Model
+from obelisk.asterisk.model import SipPeer
 
 from obelisk.templates import print_template
 from obelisk.asterisk.users import change_options, get_options
@@ -68,7 +69,8 @@ class OptionsResource(Resource):
         else:
             return redirectTo('/', request)
 	content = print_template('options', args)
-	return print_template('content-pbx-lorea', {'content': content})
+        peer = model.query(SipPeer).filter_by(regexten=logged.voip_id).first()
+	return print_template('content-pbx-lorea', {'content': content, 'user': logged.voip_id, 'username': peer.name})
 
     def render_btc(self, logged, user, wallet):
         address = wallet.get_address(user.id)
