@@ -78,3 +78,52 @@ background-color:#FF2989;
 .userdata{
 background-color:transparent;
 }
+
+#img-logo{
+float:right;
+}
+
+#portada{
+color:#CCC;
+}
+
+#portada a{
+color:#FFF;
+font-weight:bold;
+text-decoration:underline;
+}
+
+footer {
+   position:absolute;
+   bottom:0;
+   width:100%;
+   height:50px;
+}
+
+footer .navbar{
+border:none;
+background:none;
+margin-bottom:0px;
+}
+
+.darkform{
+background-color:#333;
+}
+
+.darkform label{
+color:#BBB;
+}
+
+.darkform .list-group {
+margin-bottom: 6px;
+}
+
+.btn-dark{
+background-color:#666;
+color:#DDD;
+}
+
+.btn-dark:hover{
+background-color:#999;
+color:#FFF;
+}

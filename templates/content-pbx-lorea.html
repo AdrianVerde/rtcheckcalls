@@ -1,41 +1,78 @@
-
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<title>Lorea PBX</title>
 		<meta charset="UTF-8">
-		<style type="text/css"></style>
-		<link rel="stylesheet" href="/tpl/css/home-pbx-lorea.css">
-    		<script type="text/javascript" src="/tpl/js/jquery.js"></script>
+		<link rel="stylesheet" href="/tpl/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/tpl/css/main.css">
 	</head>
 
 	<body>
-		<div id="main-wrapper">
-			<header id="header">
-				<a href="/">inicio</a>
-				<div id="logo">%%logo%%</div>					
-			</header>
+	
+	<nav class="navbar navbar-inverse" style="border-radius: 0px;">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">%%logo%%</a>
+    </div>
+	
+	<ul class="nav navbar-nav">
+        <li><a href="/user/%%user%%">Mis Datos</a></li>
+        <li id="voip"><a href="/voip">Listado Telefónico</a></li>
+		<li id="stats"><a href="/stats">Estadísticas</a></li>
+	</ul>
+	
+	 <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">%%username%% <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+			<li><a href="/voicemail/%%ext%%">correo de voz</a></li>
+            <li><a href="/options/%%ext%%">opciones</a></li>
+            <li class="divider"></li>
+            <li><a href="/logout">logout</a></li>
+          </ul>
+        </li>
+      </ul>
+
+  </div>
+</nav>
+	
+	<section id="img-logo"><img src="/tpl/hard-hat.png"/></section>
 			
-			<div id="content">
-				
-				
-				<section id="img-logo"><img src="/tpl/hard-hat.png"/></section>
-				<section id="content_inner">
-						%%content%%
-				</section>
+<div id="content" class="container col-md-6 col-md-offset-3">
+<!-- <section id="content_inner"> -->
+%%content%%
+<!-- </section> -->
+</div>
 
-				<section id="listado-enlaces">
-	<!--				<ul>
-						%%LINKS%%
-					</ul>
-					-->
-				</section>
+<footer>
+    <div class="navbar navbar-inverse navbar-static-bottom">
+                <ul class="nav navbar-nav pull-right">
+				<li id="docs"><a href="/docs">Documentación</a></li>
+				<li id="prices"><a href="/prices">Precios</a></li>
+                </ul>
+    </div>
+</footer>	
 
-			</div>
-      <!------ fin del content ---- -->
-			<footer id="footer"></footer>
-		</div>
+
+				<!-- <section id="listado-enlaces"> -->
+				<!--
+				<ul>
+				%%LINKS%%
+				</ul>
+				-->
+				<!-- </section> -->
+
+			
+	<script type="text/javascript" src="/tpl/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/tpl/js/obelisk.js"></script>
+	<script type="text/javascript" src="/tpl/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+	var path = window.location.pathname;
+	var correct_path = path.substr(1);
+	$("#" + correct_path).addClass("active");
+	});	
+	</script>
 	</body>
 
 </html>
