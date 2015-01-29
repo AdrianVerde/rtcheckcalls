@@ -83,6 +83,16 @@ background-color:transparent;
 float:right;
 }
 
+#portada{
+color:#CCC;
+}
+
+#portada a{
+color:#FFF;
+font-weight:bold;
+text-decoration:underline;
+}
+
 footer {
    position:absolute;
    bottom:0;
