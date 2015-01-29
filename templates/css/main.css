@@ -104,9 +104,13 @@ margin-bottom:0px;
 }
 
 footer .navbar a{
-color: #9d9d9d;
+color: #9d9d9d!important;
 font-weight:normal;
-text-decoration:none;
+text-decoration:none!important;
+}
+
+footer .navbar a:hover{
+color: #fff!important;
 }
 
 .darkform{
